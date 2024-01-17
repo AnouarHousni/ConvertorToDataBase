@@ -22,27 +22,27 @@
                             <FlexLayout Wrap="Wrap" Direction="Row">
                                 <StackLayout Orientation="Horizontal" Margin="0,0,5,0">
                                     <Label Text="HostName :"  Padding="5" HorizontalTextAlignment="Start" WidthRequest="100"  TextColor="Black" FontSize="15" VerticalOptions="CenterAndExpand"/>
-                                    <Entry x:Name="HostNameEntry" Text="127.0.0.1" HorizontalTextAlignment="Center" WidthRequest="200" TextColor="Black" FontSize="15" />
+                                    <Entry x:Name="HostNameEntry" HorizontalTextAlignment="Center" WidthRequest="200" TextColor="Black" FontSize="15" />
                                 </StackLayout>
 
                                 <StackLayout Orientation="Horizontal" Margin="0,0,5,0">
                                     <Label Text="Username :" Padding="5" HorizontalTextAlignment="Start" WidthRequest="100" TextColor="Black" FontSize="15" VerticalOptions="CenterAndExpand"/>
-                                    <Entry x:Name="UsernameEntry" Text="root" HorizontalTextAlignment="Center" WidthRequest="200" TextColor="Black" FontSize="15" />
+                                    <Entry x:Name="UsernameEntry" HorizontalTextAlignment="Center" WidthRequest="200" TextColor="Black" FontSize="15" />
                                 </StackLayout>
 
                                 <StackLayout Orientation="Horizontal" Margin="0,0,5,0">
                                     <Label Text="Password :"  Padding="5" HorizontalTextAlignment="Start" WidthRequest="100"  TextColor="Black" FontSize="15" VerticalOptions="CenterAndExpand"/>
-                                    <Entry x:Name="PasswordEntry" Text="20000213" HorizontalTextAlignment="Center" WidthRequest="200" TextColor="Black" FontSize="15" />
+                                    <Entry x:Name="PasswordEntry" HorizontalTextAlignment="Center" WidthRequest="200" TextColor="Black" FontSize="15" />
                                 </StackLayout>
 
                                 <StackLayout Orientation="Horizontal" Margin="0,0,5,0">
                                     <Label Text="Port :"  Padding="5" HorizontalTextAlignment="Start" WidthRequest="100"  TextColor="Black" FontSize="15" VerticalOptions="CenterAndExpand"/>
-                                    <Entry x:Name="PortEntry" Text="3500" HorizontalTextAlignment="Center" WidthRequest="200" TextColor="Black" FontSize="15" />
+                                    <Entry x:Name="PortEntry" HorizontalTextAlignment="Center" WidthRequest="200" TextColor="Black" FontSize="15" />
                                 </StackLayout>
 
                                 <StackLayout Orientation="Horizontal" Margin="0,0,5,0">
                                     <Label Text="Database :" Padding="5" HorizontalTextAlignment="Start" WidthRequest="100"  TextColor="Black" FontSize="15" VerticalOptions="CenterAndExpand"/>
-                                    <Entry x:Name="DatabaseEntry" Text="test" HorizontalTextAlignment="Center" WidthRequest="200" TextColor="Black" FontSize="15" />
+                                    <Entry x:Name="DatabaseEntry" HorizontalTextAlignment="Center" WidthRequest="200" TextColor="Black" FontSize="15" />
                                 </StackLayout>
                             </FlexLayout>
                         </StackLayout>
