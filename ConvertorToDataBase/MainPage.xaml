@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ConvertorToDataBase.MainPage">
+
+    <AbsoluteLayout>
+        <ScrollView AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="1,1,1,1">
+            <VerticalStackLayout  Padding="15" Spacing="5">
+                <StackLayout x:Name="connectionsStackLayout" Spacing="10">
+
+                    <Frame HasShadow="True" CornerRadius="15">
+                        <StackLayout>
+                            <Label Text="DataBase Connections :" FontSize="20" TextColor="Black" FontAttributes="Bold" />
+
+                            <StackLayout Orientation="Horizontal" Spacing="5">
+                                <Label Text="DataBase Type :" VerticalTextAlignment="Start" VerticalOptions="CenterAndExpand" FontSize="15" TextColor="Black" />
+                                <RadioButton IsChecked="True" VerticalOptions="CenterAndExpand" Content="Mysql" TextColor="LightSkyBlue"  GroupName="DataBaseType" CheckedChanged="RadioButton_CheckedChanged"/>
+                                <RadioButton IsChecked="False" VerticalOptions="CenterAndExpand" Content="PostgreSQL" TextColor="DeepSkyBlue" GroupName="DataBaseType" CheckedChanged="RadioButton_CheckedChanged"/>
+                                <RadioButton IsChecked="False" VerticalOptions="CenterAndExpand" Content="SqlServer" TextColor="OrangeRed" GroupName="DataBaseType" CheckedChanged="RadioButton_CheckedChanged"/>
+                            </StackLayout>
+                        
+                            <FlexLayout Wrap="Wrap" Direction="Row">
+                                <StackLayout Orientation="Horizontal" Margin="0,0,5,0">
+                                    <Label Text="HostName :"  Padding="5" HorizontalTextAlignment="Start" WidthRequest="100"  TextColor="Black" FontSize="15" VerticalOptions="CenterAndExpand"/>
+                                    <Entry x:Name="HostNameEntry" Text="127.0.0.1" HorizontalTextAlignment="Center" WidthRequest="200" TextColor="Black" FontSize="15" />
+                                </StackLayout>
+
+                                <StackLayout Orientation="Horizontal" Margin="0,0,5,0">
+                                    <Label Text="Username :" Padding="5" HorizontalTextAlignment="Start" WidthRequest="100" TextColor="Black" FontSize="15" VerticalOptions="CenterAndExpand"/>
+                                    <Entry x:Name="UsernameEntry" Text="root" HorizontalTextAlignment="Center" WidthRequest="200" TextColor="Black" FontSize="15" />
+                                </StackLayout>
+
+                                <StackLayout Orientation="Horizontal" Margin="0,0,5,0">
+                                    <Label Text="Password :"  Padding="5" HorizontalTextAlignment="Start" WidthRequest="100"  TextColor="Black" FontSize="15" VerticalOptions="CenterAndExpand"/>
+                                    <Entry x:Name="PasswordEntry" Text="20000213" HorizontalTextAlignment="Center" WidthRequest="200" TextColor="Black" FontSize="15" />
+                                </StackLayout>
+
+                                <StackLayout Orientation="Horizontal" Margin="0,0,5,0">
+                                    <Label Text="Port :"  Padding="5" HorizontalTextAlignment="Start" WidthRequest="100"  TextColor="Black" FontSize="15" VerticalOptions="CenterAndExpand"/>
+                                    <Entry x:Name="PortEntry" Text="3500" HorizontalTextAlignment="Center" WidthRequest="200" TextColor="Black" FontSize="15" />
+                                </StackLayout>
+
+                                <StackLayout Orientation="Horizontal" Margin="0,0,5,0">
+                                    <Label Text="Database :" Padding="5" HorizontalTextAlignment="Start" WidthRequest="100"  TextColor="Black" FontSize="15" VerticalOptions="CenterAndExpand"/>
+                                    <Entry x:Name="DatabaseEntry" Text="test" HorizontalTextAlignment="Center" WidthRequest="200" TextColor="Black" FontSize="15" />
+                                </StackLayout>
+                            </FlexLayout>
+                        </StackLayout>
+                    </Frame>
+
+                    <Frame HasShadow="True" CornerRadius="15">
+                        <StackLayout>
+                            <Label Text="XLSX File :" FontSize="20" TextColor="Black" FontAttributes="Bold" />
+                            <StackLayout Orientation="Horizontal" Spacing="5">
+                                <Label VerticalOptions="CenterAndExpand" Text="File :" TextColor="Black" FontSize="15" HorizontalOptions="Start"/>
+                                <Entry HorizontalOptions="FillAndExpand" x:Name="FileNamePathEntry" FontSize="15" TextColor="Black" />
+                                <Button VerticalOptions="CenterAndExpand" Text="Select File" HorizontalOptions="End" x:Name="SelectFileBtn" Clicked="SelectFileBtn_Clicked"/>
+                            </StackLayout>
+                        </StackLayout>
+                    </Frame>
+
+                </StackLayout>
+
+
+                <StackLayout x:Name="MainStackLayout" Spacing="5">
+
+                </StackLayout>
+                
+            </VerticalStackLayout>
+        </ScrollView>
+        <ActivityIndicator Color="DimGray" IsRunning="true" IsVisible="false" x:Name="activityIndicator" AbsoluteLayout.LayoutFlags="PositionProportional" Scale="4" AbsoluteLayout.LayoutBounds="0.5,0.5,autosize,autosize" />
+        <Button Text="Next" WidthRequest="120" HorizontalOptions="EndAndExpand" BackgroundColor="ForestGreen" TextColor="White" Clicked="Button_Clicked" Padding="5" AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="0.98,0.95,autosize,autosize"/>
+    </AbsoluteLayout>
+</ContentPage>

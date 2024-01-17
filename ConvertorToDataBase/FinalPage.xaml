@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ConvertorToDataBase.FinalPage"
+             Title="FinalPage">
+    <AbsoluteLayout>
+        <ScrollView AbsoluteLayout.LayoutBounds="1,1,1,1" AbsoluteLayout.LayoutFlags="All">
+            <VerticalStackLayout>
+                <StackLayout x:Name="KeySetStackLayout" Padding="5" Spacing="5">
+
+                </StackLayout>
+                <StackLayout Orientation="Horizontal" Spacing="5" HorizontalOptions="CenterAndExpand">
+                    <Button x:Name="addConstrantBtn" Clicked="addConstrantBtn_Clicked" Text="Add" BackgroundColor="DeepSkyBlue" WidthRequest="100" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" />
+                    <Button x:Name="removeConstrantBtn" Clicked="removeConstrantBtn_Clicked"  Text="Remove" BackgroundColor="OrangeRed" WidthRequest="100" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" />
+                    
+                </StackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+        <ActivityIndicator Color="DimGray" IsRunning="true" IsVisible="false" x:Name="activityIndicator" AbsoluteLayout.LayoutFlags="PositionProportional" Scale="4" AbsoluteLayout.LayoutBounds="0.5,0.5,autosize,autosize" />
+        <Button Text="Load Data" WidthRequest="120" x:Name="sendDataBtn" Clicked="sendDataBtn_Clicked" TextColor="White" BackgroundColor="ForestGreen" HorizontalOptions="EndAndExpand" VerticalOptions="EndAndExpand" AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="0.98,0.95,autosize,autosize"/>
+    </AbsoluteLayout>
+    
+</ContentPage>
