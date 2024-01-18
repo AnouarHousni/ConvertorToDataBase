@@ -333,14 +333,13 @@ namespace ConvertorToDataBase
             return null;
         }
 
-        
-
         private async void Button_Clicked(object sender, EventArgs e)
         {
             try
             {
                 activityIndicator.IsVisible = true;
 
+                // If 'connectionsStackLayout.IsVisible == true', it indicates that the database connection is not configured yet
                 if (connectionsStackLayout.IsVisible)
                 {
                     connectionsStackLayout.IsVisible = false;
@@ -354,7 +353,7 @@ namespace ConvertorToDataBase
                 }
                 else
                 {
-                    await updateAndNavigateToFinalPage();
+                    await extractTableDataFromControlsAndNavigate();
                 }
             }
             catch(Exception ex)
@@ -397,7 +396,8 @@ namespace ConvertorToDataBase
         private List<(string, List<FileColumn>)> ExtractTablesFromExcel()
         {
             List<(string, List<FileColumn>)> tables = new List<(string, List<FileColumn>)>();
-            // Provide the path to your Excel file (.xlsx)
+
+            // Provide the path to Excel file (.xlsx)
             string filePath = FileNamePathEntry.Text;
 
             // Connection string for Excel file using OleDb
@@ -409,6 +409,7 @@ namespace ConvertorToDataBase
 
                 // Get the names of the sheets in the Excel file
                 var sheets = connection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+
                 if (sheets == null)
                 {
                     throw new NoSheetsFoundException();
@@ -447,25 +448,35 @@ namespace ConvertorToDataBase
             }
         }
 
-        private async Task updateAndNavigateToFinalPage()
+        private async Task extractTableDataFromControlsAndNavigate()
         {
-            List<(string, List<TableColumn>)> tables = new List<(string, List<TableColumn>)>();
+            // List to store extracted table information
+            List<(string TableName, List<TableColumn> Columns)> tables = new List<(string, List<TableColumn>)>();
 
+            // Loop through each table in the collection
             for (int i = 0; i < this.Tables.Count; i++)
             {
+                // List to store columns of the current table
                 List<TableColumn> tableColumns = new List<TableColumn>();
 
+                // Extract sheet name and create class ID for the table entry
                 string sheetName = this.Tables[i].sheetName;
                 string tableClassID = $"{entryTableID}{sheetName}";
+
+                // Find the entry control for the table name
                 Entry? foundEntryTable = findEntryByClassID(tableClassID);
 
+                // If the entry control is not found, exit the loop
                 if (foundEntryTable is null)
                     break;
 
+                // Extract the table name from the found entry control
                 string tableName = foundEntryTable.Text;
 
-                foreach (var colName in this.Tables[i].fileColumns.Select(_=>_.Name))
+                // Loop through each column in the current table
+                foreach (var colName in this.Tables[i].fileColumns.Select(_ => _.Name))
                 {
+                    // Generate dynamic IDs for various controls related to the current column
                     string dynamicID = $"{sheetName}{colName}";
 
                     string colEntryClassID = $"{entryColNameID}{dynamicID}";
@@ -475,34 +486,40 @@ namespace ConvertorToDataBase
                     string pickerKeySetClassID = $"{pickerKeySetID}{dynamicID}";
                     string entryDefaultValueClassID = $"{entryDefaultValueID}{dynamicID}";
 
+                    // Find controls related to the current column
                     Entry? foundEntryColName = findEntryByClassID(colEntryClassID);
                     Picker? foundPickerDataType = findPickerByClassID(pickerDataTypeClassID);
-                    Entry? foundDataTypeLenght = findEntryByClassID(entryDataTypeLengthClassID);
-                    Entry? foundentryDateFormat = findEntryByClassID(entryDateFormatClassID);
-                    Picker? foundpickerKeySet = findPickerByClassID(pickerKeySetClassID);
-                    Entry? foundentryDefaultValue = findEntryByClassID(entryDefaultValueClassID);
+                    Entry? foundDataTypeLength = findEntryByClassID(entryDataTypeLengthClassID);
+                    Entry? foundEntryDateFormat = findEntryByClassID(entryDateFormatClassID);
+                    Picker? foundPickerKeySet = findPickerByClassID(pickerKeySetClassID);
+                    Entry? foundEntryDefaultValue = findEntryByClassID(entryDefaultValueClassID);
 
-                    if (foundEntryColName is null || foundPickerDataType is null || foundDataTypeLenght is null || foundentryDateFormat is null ||
-                        foundpickerKeySet is null || foundentryDefaultValue is null)
+                    // If any of the controls related to the current column is not found, exit the loop
+                    if (foundEntryColName is null || foundPickerDataType is null || foundDataTypeLength is null || foundEntryDateFormat is null ||
+                        foundPickerKeySet is null || foundEntryDefaultValue is null)
                     {
                         break;
                     }
 
+                    // Extract information from controls and create a TableColumn
                     string NewColName = foundEntryColName.Text;
                     string? selectedDateType = foundPickerDataType.SelectedItem as string;
-                    string defaultValue = foundentryDefaultValue.Text;
+                    string defaultValue = foundEntryDefaultValue.Text;
                     string dataType = selectedDateType;
-                    ColumnOption option = (foundpickerKeySet.SelectedItem as ColumnOptionsViewModel).ColumnOption; // == nameof(ColumnOption.Default) ? $"default '{foundentryDefaultValue.Text}'" : foundpickerKeySet.SelectedItem as string == nameof(ColumnOption.Unique) ? "unique" : "";
-                    string dateformat = foundentryDateFormat.Text;
-                    int length = int.TryParse(foundDataTypeLenght.Text, out _) ? int.Parse(foundDataTypeLenght.Text) : 0;
+                    ColumnOption option = (foundPickerKeySet.SelectedItem as ColumnOptionsViewModel).ColumnOption;
+                    string dateformat = foundEntryDateFormat.Text;
+                    int length = int.TryParse(foundDataTypeLength.Text, out _) ? int.Parse(foundDataTypeLength.Text) : 0;
 
+                    // Add the TableColumn to the list of columns for the current table
                     tableColumns.Add(new TableColumn { ColumnOption = option, DataType = dataType, DateFormat = dateformat, Length = length, Name = NewColName, DefaultValue = defaultValue });
                 }
 
+                // Add the table information (table name and columns) to the list of tables
                 tables.Add((tableName, tableColumns));
             }
 
-            await Navigation.PushAsync(new FinalPage(tables,_dbManager,databaseName, connectionStringFile));
+            // Navigate to the FinalPage with the extracted table information
+            await Navigation.PushAsync(new FinalPage(tables, _dbManager, databaseName, connectionStringFile));
         }
 
         private async void SelectFileBtn_Clicked(object sender, EventArgs e)

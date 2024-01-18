@@ -257,7 +257,7 @@ public partial class FinalPage : ContentPage
             }
         }
 
-        return null; // Return null if not found
+        return null;
     }
 
     private Label FindLabelById(string labelId)
@@ -276,7 +276,7 @@ public partial class FinalPage : ContentPage
             }
         }
 
-        return null; // Return null if not found
+        return null;
     }
 
     private void addConstrantBtn_Clicked(object sender, EventArgs e)
@@ -307,7 +307,7 @@ public partial class FinalPage : ContentPage
             }
         }
 
-        return null; // Return null if not found
+        return null;
     }
 
     private async void sendDataBtn_Clicked(object sender, EventArgs e)
@@ -317,112 +317,131 @@ public partial class FinalPage : ContentPage
             await _dbManager.OpenConnection();
 
             activityIndicator.IsVisible = true;
+
             List<PrimaryKeyInfo> tablePrimaryKey = new List<PrimaryKeyInfo>();
 
+            // Iterate through each table in the list
             foreach (var table in _Tables)
             {
                 try
                 {
+                    // Attempt to create a database table
                     await _dbManager.CreateDatabaseTable(table.tableColumns, table.tableName, _dataBaseName, shouldSkipTableExistenceCheck: false);
                 }
                 catch (TableAlreadyExistsException ex)
                 {
+                    // If the table already exists, prompt the user to confirm whether to proceed
                     bool result = await DisplayAlert("Warning", ex.Message, "Yes", "No");
 
                     if (result)
                     {
+                        // Create the database table, skipping the existence check
                         await _dbManager.CreateDatabaseTable(table.Item2, table.Item1, _dataBaseName, shouldSkipTableExistenceCheck: true);
                     }
                 }
             }
 
+            // Iterate through each user-defined relationship
             for (int i = 0; i < count; i++)
             {
+                // Generate IDs for various picker controls related to the current relationship
                 string keyTypePickerClassID = $"{keyTypePickerID}{i}";
                 string referenceTablePickerClassID = $"{referenceTablePickerID}{i}";
                 string referenceColumnPickerClassID = $"{referenceColumnPickerID}{i}";
                 string columnPickerClassID = $"{columnPickerID}{i}";
                 string tablePickerClassID = $"{tablePickerID}{i}";
 
+                // Find the picker controls based on their IDs
                 Picker keyTypePicker = FindPickerById(keyTypePickerClassID);
                 Picker columnPicker = FindPickerById(columnPickerClassID);
                 Picker tablePicker = FindPickerById(tablePickerClassID);
                 Picker referenceTablePicker = FindPickerById(referenceTablePickerClassID);
                 Picker referenceColumnPicker = FindPickerById(referenceColumnPickerClassID);
 
+                // If any of the picker controls is not found, exit the loop
                 if (keyTypePicker is null || columnPicker is null || tablePicker is null || referenceTablePicker is null || referenceColumnPicker is null)
                     break;
 
+                // Extract selected values from picker controls
                 string? keyTypeString = keyTypePicker.SelectedItem as string;
                 string? columnName = columnPicker.SelectedItem as string;
                 string? tableName = tablePicker.SelectedItem as string;
 
+                // If the relationship type is FOREIGNKEY, create a foreign key constraint
                 if (keyTypeString == nameof(KeyType.FOREIGNKEY))
                 {
                     string? refrenceTableName = referenceTablePicker.SelectedItem as string;
                     string? referenceColumnName = referenceColumnPicker.SelectedItem as string;
 
+                    // Construct and execute the SQL query for creating a foreign key constraint
                     string query = $"ALTER TABLE {tableName} " +
-                           $"ADD CONSTRAINT fk_constraint_{tableName}_{refrenceTableName} " +
-                           $"FOREIGN KEY({columnName}) " +
-                           $"REFERENCES {refrenceTableName}({referenceColumnName}); ";
+                                   $"ADD CONSTRAINT fk_constraint_{tableName}_{refrenceTableName} " +
+                                   $"FOREIGN KEY({columnName}) " +
+                                   $"REFERENCES {refrenceTableName}({referenceColumnName}); ";
 
                     await _dbManager.ExecuteDatabaseQuery(query);
                 }
                 else
                 {
+                    // If the relationship type is PRIMARYKEY, add the column to the list of primary keys
                     tablePrimaryKey.Add(new PrimaryKeyInfo { ColumnName = columnName, TableName = tableName });
                 }
             }
 
+            // Iterate through each table and add primary key constraints
             for (int n = 0; n < _Tables.Count; n++)
             {
                 string TableName = _Tables[n].Item1;
 
+                // Count the number of primary key columns for the current table
                 int count = tablePrimaryKey.Where(_ => _.TableName == TableName).Count();
 
-                if (count == 0)
-                    continue;
-
-                string query = $"ALTER TABLE {TableName} ADD CONSTRAINT PK_C{count}_{TableName} PRIMARY KEY (";
-
-                if (count > 1)
+                // If there are primary key columns, construct and execute the SQL query
+                if (count > 0)
                 {
+                    string query = $"ALTER TABLE {TableName} ADD CONSTRAINT PK_C{count}_{TableName} PRIMARY KEY (";
 
-                    List<PrimaryKeyInfo> duplicateTables = tablePrimaryKey.Where(_ => _.TableName == TableName).ToList();
-
-                    for (int i = 0; i < duplicateTables.Count; i++)
+                    if (count > 1)
                     {
-                        query += $"{duplicateTables[i].ColumnName}{((i != duplicateTables.Count - 1) ? "," : "")}";
+                        // If there are multiple primary key columns, concatenate them in the query
+                        List<PrimaryKeyInfo> duplicateTables = tablePrimaryKey.Where(_ => _.TableName == TableName).ToList();
+
+                        for (int i = 0; i < duplicateTables.Count; i++)
+                        {
+                            query += $"{duplicateTables[i].ColumnName}{((i != duplicateTables.Count - 1) ? "," : "")}";
+                        }
+
+                        query += ")";
+                    }
+                    else
+                    {
+                        // If there is a single primary key column, add it to the query
+                        PrimaryKeyInfo? foundTablePrimaryKey = tablePrimaryKey.FirstOrDefault(_ => _.TableName == TableName);
+
+                        if (foundTablePrimaryKey is not null)
+                        {
+                            query += $"{foundTablePrimaryKey.ColumnName});";
+                        }
                     }
 
-                    query += ")";
+                    // Execute the SQL query to add the primary key constraint
+                    await _dbManager.ExecuteDatabaseQuery(query);
                 }
-                else
-                {
-                    PrimaryKeyInfo? foundTablePrimaryKey = tablePrimaryKey.FirstOrDefault(_ => _.TableName == TableName);
-
-                    if (foundTablePrimaryKey is not null)
-                    {
-                        query += $"{foundTablePrimaryKey.ColumnName});";
-                    }
-                }
-
-                await _dbManager.ExecuteDatabaseQuery(query);
             }
 
             await LoadAllDataFromExcelFileIntoDatabase();
 
-            DisplayAlert("Success", "Data has been sended successfully", "ok");
+            // Display a success alert
+            DisplayAlert("Success", "Data has been sent successfully", "ok");
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             await DisplayAlert("Error", ex.Message, "Ok");
         }
         finally
         {
+            // Close the database connection and hide the activity indicator
             await _dbManager.CloseConnection();
-
             activityIndicator.IsVisible = false;
         }
     }
