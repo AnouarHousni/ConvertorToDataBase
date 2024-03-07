@@ -383,9 +383,9 @@ namespace ConvertorToDataBase
             string connString = (dataBaseType == DataBaseType.MYSQL) ? $"server={hostName};uid={userName};password={password};port={port};database={databaseName}" : 
                 $"Host={hostName};Port={port};Username={userName};Password={password};Database={databaseName};";
 
-            DbConnection dbConnection = (dataBaseType == DataBaseType.MYSQL) ? new MySqlConnection(connString) : (dataBaseType == DataBaseType.POSTGRESQL) ? new NpgsqlConnection(connString) : new SqlConnection(connString);
-
-            _dbManager = new DatabaseManager( dataBaseType, dbConnection);
+            _dbManager = (dataBaseType == DataBaseType.SQLSERVER) ? new SQLServerDataBaseManager(new SqlConnection(connString)) :
+                        (dataBaseType == DataBaseType.MYSQL) ? new MysqlDataBaseManager(new MySqlConnection(connString)) :
+                        new PostgresDataBaseManager(new NpgsqlConnection(connString));
 
             bool canConnect = await _dbManager.TestConnection();
 

@@ -5,7 +5,7 @@ VisualStudioVersion = 17.8.34408.163
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConvertorToDataBase", "ConvertorToDataBase\ConvertorToDataBase.csproj", "{12EDBC27-624E-404C-8ACB-726D5F3F9C2B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConvertorToDatabaseIntegrationTest", "ConvertorToDatabaseUnitTest\ConvertorToDatabaseIntegrationTest.csproj", "{CF4243D9-70C1-4D1A-862F-11C5DE6EAEA3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConvertorToDatabaseIntegrationTest", "ConvertorToDatabaseUnitTest\ConvertorToDatabaseIntegrationTest.csproj", "{CF4243D9-70C1-4D1A-862F-11C5DE6EAEA3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

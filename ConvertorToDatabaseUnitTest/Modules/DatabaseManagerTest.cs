@@ -26,7 +26,7 @@ namespace ConvertorToDatabaseUnitTest.Modules
 
         private IDatabaseManager _databaseManager;
         private readonly List<(string tableName, List<TableColumn> tableColumns)> _tables;
-        private readonly DbConnection _dbConnection;
+        private readonly MySqlConnection _mySqlConnection;
         public DatabaseManagerTest()
         {
             _tables = new List<(string tableName, List<TableColumn> tableColumns)>
@@ -47,9 +47,9 @@ namespace ConvertorToDatabaseUnitTest.Modules
                 })
             };
 
-            _dbConnection = new MySqlConnection(connString);
+            _mySqlConnection = new MySqlConnection(connString);
 
-            _databaseManager = new DatabaseManager(dataBaseType, _dbConnection);
+            _databaseManager = new MysqlDataBaseManager(_mySqlConnection);
 
             
         }
@@ -69,7 +69,7 @@ namespace ConvertorToDatabaseUnitTest.Modules
 
         private async Task dropTables()
         {
-            if (_dbConnection is not MySqlConnection mySqlConnection)
+            if (_mySqlConnection is not MySqlConnection mySqlConnection)
             {
                 throw new Exception("");
             }
@@ -100,7 +100,7 @@ namespace ConvertorToDatabaseUnitTest.Modules
         [Fact]
         public async Task TestConnection_UsingWrongConnString_ThrowException()
         {
-            _databaseManager = new DatabaseManager(dataBaseType , new MySqlConnection($"Server=127.0.0.1;uid=xxx:password=password123;database=test01;port=3306"));
+            _databaseManager = new MysqlDataBaseManager(new MySqlConnection($"Server=127.0.0.1;uid=xxx:password=password123;database=test01;port=3306"));
 
             bool canConnect = await _databaseManager.TestConnection();
 
